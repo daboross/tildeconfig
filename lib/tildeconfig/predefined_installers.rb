@@ -19,4 +19,18 @@ def define_predefined_installers
       result.strip.downcase.intern
     end
   end
+
+  # MacOS OS detection
+  def_os_detection do
+    begin
+      spawn(%w[which sw_vers], %i[in out err] => :close).wait
+      return nil unless $CHILD_STATUS.success?
+
+      spawn(%w[which brew], %i[in out err] => :close).wait
+      return nil unless $CHILD_STATUS.success?
+
+      :homebrew
+    rescue StandardError
+      nil
+    end
 end
