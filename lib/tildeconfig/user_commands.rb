@@ -58,6 +58,17 @@ def def_installer(name, &block)
 end
 
 ##
+# Defines a script to detect a specific operating system or set of operating
+# systems. This will be run once with no arguments, and should return a symbol
+# representing the lowercase operating system name if and only if we're running
+# on that operating system. If the detection fails, return nothing, and the
+# next script will be run.
+def def_os_detection(&block)
+  config = TildeConfig::Configuration.instance
+  config.os_detection_scripts.append(TildeConfig::OsDetectionScript.new(&block))
+end
+
+##
 # Defines a new package with the given name and system names. The +system_names+
 # parameter is a hash from symbols representing package names to strings
 # representing the name of the package on that system. Overrides existing

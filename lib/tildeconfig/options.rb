@@ -102,18 +102,6 @@ module TildeConfig
     # Checks that all provided options are valid. Rasises an
     # +OptionsError+ when given invalid options.
     def validate
-      if @packages && !@system
-        raise OptionsError.new(
-          'Must proved system when installing packages with --packages',
-          self
-        )
-      end
-
-      config = Configuration.instance
-      if @system && !config.installers.key?(@system)
-        raise OptionsError.new("Unknown system #{system}", self)
-      end
-
       if directory_merge_strategy != :override &&
          directory_merge_strategy != :merge
         raise OptionsError.new('The --directory-merge-strategy only accepts ' \

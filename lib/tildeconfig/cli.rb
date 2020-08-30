@@ -55,6 +55,13 @@ module TildeConfig
 
           return false unless validate_configuration
 
+          if options.packages && !options.system
+            # auto-detect the operating system we're running on
+            options.system = detect_os unless options.system
+
+            return false unless validate_os(options)
+          end
+
           command = args[0]
           modules = args.drop(1).map(&:to_sym)
           modules.each do |m|
@@ -238,6 +245,42 @@ module TildeConfig
           dep = cycle[(i + 1) % cycle.size]
           warn "\tmodule #{name} depends on #{dep}"
         end
+      end
+
+      ##
+      # Detects the operating system we're running on, validates that it's a
+      # valid operating system, and returns the found os name.
+      #
+      # Throws an error if the os is found, but we don't know its installer,
+      # and returns nothing if not found.
+      def detect_os
+        config = Configuration.instance
+        config.os_detection_scripts.each do |script|
+          found_os = script.detect
+          return found_os if found_os
+        end
+        nil
+      end
+
+      ##
+      # Validates we have a valid operating system. Returns true if valid,
+      # prints an error and returns false if not. Should only be called if
+      # installing system packages is enabled.
+      def validate_os(options)
+        config = Configuration.instance
+        unless options.system
+          warn 'No operating system detected, please provide manually'
+          return false
+        end
+
+        valid = config.installers.key?(options.system)
+        unless valid
+          pp options.system
+          warn 'Package installer not configured for operating system'\
+            " #{options.system}"
+        end
+
+        valid
       end
     end
   end

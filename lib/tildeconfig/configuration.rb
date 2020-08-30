@@ -7,12 +7,13 @@ module TildeConfig
     # themselves.  The +installers+ is a map from system names as symbols to the
     # +PackageInstaller+ for that system.  The +system_packages+ is a map from
     # package names as strings to the +SystemPackage+ for it.
-    attr_reader :modules, :installers, :system_packages
+    attr_reader :modules, :installers, :system_packages, :os_detection_scripts
 
     def initialize
       @modules = {}
       @installers = {}
       @system_packages = {}
+      @os_detection_scripts = []
     end
 
     class << self
