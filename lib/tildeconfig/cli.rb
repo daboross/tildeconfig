@@ -18,27 +18,27 @@ module TildeConfig
       # can serve as a "pseudo" configuration file. Returns true on success,
       # false on failure.
       def run(args, load_config_file: true)
-        options = Options.new.parse(args)
-        begin
-          options.validate
-        rescue OptionsError => e
-          warn "Invalid options: #{e.message}"
-          found_error = true
-        end
-        return false if found_error
-
-        if args.empty?
-          options.print_help
-          return false
-        end
-
-        config_file = nil
-        if load_config_file
-          config_file, found = find_config_file(options)
-          return false unless found
-        end
-
         Configuration.with_standard_library do
+          options = Options.new.parse(args)
+          begin
+            options.validate
+          rescue OptionsError => e
+            warn "Invalid options: #{e.message}"
+            found_error = true
+          end
+          return false if found_error
+
+          if args.empty?
+            options.print_help
+            return false
+          end
+
+          config_file = nil
+          if load_config_file
+            config_file, found = find_config_file(options)
+            return false unless found
+          end
+
           found_error = false
           begin
             # This prevents loading other files in the load path instead of the
